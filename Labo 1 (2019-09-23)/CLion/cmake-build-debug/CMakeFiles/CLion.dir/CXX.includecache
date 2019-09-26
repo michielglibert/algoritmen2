@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/flora/OneDrive/School/IG-Master 2019-2020/Algoritmen II/algoritmen2/Labo 1 (2019-09-23)/CLion/main.cpp
+iostream
+-
+zoekboom1.h
+C:/Users/flora/OneDrive/School/IG-Master 2019-2020/Algoritmen II/algoritmen2/Labo 1 (2019-09-23)/CLion/zoekboom1.h
+string
+-
+
+C:/Users/flora/OneDrive/School/IG-Master 2019-2020/Algoritmen II/algoritmen2/Labo 1 (2019-09-23)/CLion/zoekboom1.h
+cstdlib
+-
+iostream
+-
+queue
+-
+memory
+-
+functional
+-
+fstream
+-
+sstream
+-
+cassert
+-
+
