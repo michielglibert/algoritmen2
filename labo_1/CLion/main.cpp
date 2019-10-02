@@ -21,8 +21,10 @@ int main()
 
     boom.teken("file1");
     boom.roteer(1);
-    boom.maakOnevenwichtig();
+    //boom.maakOnevenwichtig();
     boom.teken("file2");
+    boom.maakEvenwichtig();
+    boom.teken("file3");
     std::cout << "Hello, World!" << std::endl;
 
     return 0;

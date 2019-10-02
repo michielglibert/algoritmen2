@@ -263,38 +263,6 @@ void Zoekboom<Sleutel, Data>::roteer(Sleutel sleutel)
     }
 }
 
-// template <class Sleutel, class Data>
-// void Zoekboom<Sleutel, Data>::roteerRechts(Sleutel sleutel)
-// {
-//     Zoekboom<Sleutel, Data> *plaats;
-//     zoekKnoop<Sleutel, Data> *ouder;
-//     Zoekboom<Sleutel, Data>::zoek(sleutel, ouder, plaats);
-//     Zoekboom<Sleutel, Data> *ouderBoom = this->geefBoomBovenKnoop(*ouder);
-
-//     std::cerr << "test" << endl;
-//     std::cerr << (*plaats)->ouder->sleutel << endl;
-//     ouderBoom->swap((*plaats)->rechts);
-//     ouderBoom->swap(*plaats);
-// }
-
-// template <class Sleutel, class Data>
-// void Zoekboom<Sleutel, Data>::roteerLinks(Sleutel sleutel)
-// {
-//     Zoekboom<Sleutel, Data> *plaats;
-//     zoekKnoop<Sleutel, Data> *ouder;
-//     Zoekboom<Sleutel, Data>::zoek(sleutel, ouder, plaats);
-//     std::cerr << "teeaazst";
-//     Zoekboom<Sleutel, Data> *ouderBoom = Zoekboom<Sleutel, Data>::geefBoomBovenKnoop(*ouder);
-//     if ((*ouderBoom)->rechts == *plaats)
-//     {
-//         if ((*plaats)->links)
-//         {
-//             ouderBoom->swap((*plaats)->links);
-//         }
-//         ouderBoom->swap(*plaats);
-//     }
-// };
-
 template <class Sleutel, class Data>
 Zoekboom<Sleutel, Data> &zoekKnoop<Sleutel, Data>::geefKind(bool linkerkind)
 {
@@ -331,6 +299,18 @@ void Zoekboom<Sleutel, Data>::maakOnevenwichtig()
 template <class Sleutel, class Data>
 void Zoekboom<Sleutel, Data>::maakEvenwichtig()
 {
+    //De boom onevenwichtig maken zodat knopen langs 1 kant staan
+    this->maakOnevenwichtig();
+
+    //Roteren zolang de boom onevenwichtig is
+    int diepte = this->geefDiepte();
+    for (int i = 0; i < diepte / 2; i++)
+    {
+        this->roteer((*this)->links->sleutel);
+    }
+
+    //Dit recursief toepassen
+    //Hoeft niet?
 }
 
 #endif
