@@ -1,0 +1,11 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Pre-Debug Compile",
+      "command": "g++", // Could be any other shell command
+      "args": ["-std=c++17", "-g", "${fileBasename}"],
+      "type": "shell"
+    }
+  ]
+}
