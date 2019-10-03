@@ -1,31 +1,62 @@
 #include <iostream>
-#include "zoekboom1.h"
+#include "splayboom.h"
 #include <string>
+#include <fstream>
 
 int main()
 {
-    Zoekboom<int, string> boom;
-    boom.voegtoe(4, "test", false);
-    boom.voegtoe(2, "test 2", false);
-    boom.voegtoe(1, "test 2", false);
-    boom.voegtoe(3, "test 2", false);
-    boom.voegtoe(2, "test 2", false);
-    boom.voegtoe(0, "test", false);
-    boom.voegtoe(10, "test 2", false);
-    boom.voegtoe(8, "test 2", false);
-    boom.voegtoe(5, "test 2", false);
-    boom.voegtoe(11, "test 2", false);
+    //1-100
+    Splayboom<int, string> boom;
+    for (int i = 1; i <= 100; i++)
+    {
+        boom.voegtoe(i, "data", false);
+    }
+    boom.teken("stap1");
+    boom.zoek(1);
+    boom.teken("stap2");
 
-    boom.teken("start");
-    boom.roteer(2);
+    //1-100 vanaf 50 beginnen en dan 51,49,52,48,...
+    Splayboom<int, string> boom2;
+    boom2.voegtoe(50, "data", false);
+    for (int i = 1; i < 50; i++)
+    {
+        boom2.voegtoe(50 + i, "data", false);
+        boom2.voegtoe(50 - i, "data", false);
+    }
+    boom2.voegtoe(100, "data", false);
+    boom2.teken("stap3");
+    boom2.zoek(50);
+    boom2.teken("stap4");
 
-    boom.teken("file1");
-    boom.roteer(1);
-    //boom.maakOnevenwichtig();
-    boom.teken("file2");
-    boom.maakEvenwichtig();
-    boom.teken("file3");
-    std::cout << "Hello, World!" << std::endl;
+    //Shakespear bestand
+    // Splayboom<string, int> shakespearboom;
+    // std::ifstream in{"Shakespeare.txt"};
+    // if (!in)
+    // {
+    //     std::cerr << "Error while reading file" << std::endl;
+    // }
+
+    // std::string woord;
+    // shakespearboom.count = 0;
+    // while (in >> woord)
+    // {
+    //     std::cerr << woord << std::endl;
+    //     zoekKnoop<string, int> *knoop = shakespearboom.zoek(woord);
+    //     shakespearboom.teken("lol");
+    //     if (knoop == nullptr)
+    //     {
+    //         shakespearboom.voegtoe(woord, 1);
+    //     }
+    //     else
+    //     {
+    //         shakespearboom.voegtoe(woord, knoop->data + 1);
+    //     }
+    // }
+
+    //std::cout << "Aantal rotaties voor elementen: " << shakespearboom.count << std::endl;
+    //shakespearboom.teken("stap5");
+
+    std::cout << "Finished" << std::endl;
 
     return 0;
 }

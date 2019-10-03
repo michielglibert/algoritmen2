@@ -26,7 +26,6 @@ using std::unique_ptr;
    beschrijving: Binaire Zoekboom waarin duplicaatsleutels wel of niet zijn toegestaan.
    
 ***************************************************************************/
-
 template <class Sleutel, class Data>
 class zoekKnoop;
 
@@ -35,6 +34,7 @@ class Zoekboom : public unique_ptr<zoekKnoop<Sleutel, Data>>
 {
     //....move en copy. Noot: als er geen copy nodig is, zet hem beste op delete.
 public:
+    int count = 0;
     void inorder(std::function<void(const zoekKnoop<Sleutel, Data> &)> bezoek) const;
     void schrijf(ostream &os) const;
     void teken(const char *bestandsnaam);
@@ -46,14 +46,6 @@ public:
     {
         this->swap(knoop);
     };
-    //    //Move constructor
-    //    Zoekboom(Zoekboom<Sleutel, Data> &&zoekboom) = delete;
-    //    //Copy operator
-    //    Zoekboom<Sleutel, Data> &operator=(const Zoekboom<Sleutel, Data> &zoekboom) = delete;
-    //    //Move operator
-    //    const Zoekboom &operator=(Zoekboom<Sleutel, Data> &&zoekboom) {
-    //        *this = std::move(zoekboom);
-    //    }
 
     //te implementeren
     bool repOK() const;
@@ -88,23 +80,6 @@ public:
     Data data;
     zoekKnoop<Sleutel, Data> *ouder;
     Zoekboom<Sleutel, Data> links, rechts;
-};
-
-template <class Sleutel, class Data>
-class Splayboom : public Zoekboom<Sleutel, Data>
-{
-public:
-    //Splay operatie - Zig, Zig Zig, Zig Zag
-    //https://en.wikipedia.org/wiki/Splay_tree
-    void splay();
-    //----Zoeken
-    //Item zoals normaal zoeken
-    //Splay operatie uitvoeren
-    Data &zoeken(Sleutel sleutel);
-    //----Toevoegen
-    //Item zoals normaal toevoegen
-    //Splay operatie uitvoeren
-    void voegToe(Sleutel sleutel, Data data);
 };
 
 /*****************************************************************************
@@ -238,6 +213,7 @@ int Zoekboom<Sleutel, Data>::geefDiepte()
 template <class Sleutel, class Data>
 void Zoekboom<Sleutel, Data>::roteer(Sleutel sleutel)
 {
+    this->count++;
     // zoek naar de knoop die je wilt roteren
     zoekKnoop<Sleutel, Data> *ouder;
     Zoekboom<Sleutel, Data> *plaats;
@@ -247,35 +223,29 @@ void Zoekboom<Sleutel, Data>::roteer(Sleutel sleutel)
 
     if (ouder)
     {
-        std::cerr << (*plaats)->sleutel << endl;
-        if ((*ouderBoom)->ouder)
-            std::cerr << (*ouderBoom)->ouder->sleutel << endl;
-
         if ((*plaats)->sleutel > ouder->sleutel)
         {
             // rotatie links
-            std::cout << "roteer links" << std::endl;
             ouderBoom->swap((*plaats)->links);
             ouderBoom->swap(*plaats);
 
             //parents aanpassen
-            (*ouderBoom)->ouder = nullptr;
-            (*ouderBoom)->links->ouder = &(**ouderBoom);
+            (*ouderBoom)->ouder = (*ouderBoom)->links->ouder;
+            (*ouderBoom)->links->ouder = (*ouderBoom).get();
             if ((*ouderBoom)->links->rechts)
-                (*ouderBoom)->links->rechts->ouder = &(*(*ouderBoom)->links);
+                (*ouderBoom)->links->rechts->ouder = (*ouderBoom)->links.get();
         }
         else
         {
             // rotatie rechts
-            std::cout << "roteer rechts" << std::endl;
             ouderBoom->swap((*plaats)->rechts);
             ouderBoom->swap(*plaats);
 
             //parents aanpassen
-            (*ouderBoom)->ouder = nullptr;
-            (*ouderBoom)->rechts->ouder = &(**ouderBoom);
+            (*ouderBoom)->ouder = (*ouderBoom)->rechts->ouder;
+            (*ouderBoom)->rechts->ouder = (*ouderBoom).get();
             if ((*ouderBoom)->rechts->links)
-                (*ouderBoom)->rechts->links->ouder = &(*(*ouderBoom)->rechts);
+                (*ouderBoom)->rechts->links->ouder = (*ouderBoom)->rechts.get();
         }
     }
 }
@@ -316,6 +286,9 @@ void Zoekboom<Sleutel, Data>::maakOnevenwichtig()
 template <class Sleutel, class Data>
 void Zoekboom<Sleutel, Data>::maakEvenwichtig()
 {
+    //Beter in 2 aparte methodes
+    //...
+
     //De boom onevenwichtig maken zodat knopen langs 1 kant staan
     this->maakOnevenwichtig();
 
@@ -323,6 +296,8 @@ void Zoekboom<Sleutel, Data>::maakEvenwichtig()
     int diepte = this->geefDiepte();
     for (int i = 0; i < diepte / 2; i++)
     {
+        //Checken indien nullptr
+        //...
         this->roteer((*this)->links->sleutel);
     }
 

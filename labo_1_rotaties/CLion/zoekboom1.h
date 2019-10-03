@@ -46,14 +46,6 @@ public:
     {
         this->swap(knoop);
     };
-    //    //Move constructor
-    //    Zoekboom(Zoekboom<Sleutel, Data> &&zoekboom) = delete;
-    //    //Copy operator
-    //    Zoekboom<Sleutel, Data> &operator=(const Zoekboom<Sleutel, Data> &zoekboom) = delete;
-    //    //Move operator
-    //    const Zoekboom &operator=(Zoekboom<Sleutel, Data> &&zoekboom) {
-    //        *this = std::move(zoekboom);
-    //    }
 
     //te implementeren
     bool repOK() const;
@@ -242,10 +234,10 @@ void Zoekboom<Sleutel, Data>::roteer(Sleutel sleutel)
             ouderBoom->swap(*plaats);
 
             //parents aanpassen
-            (*ouderBoom)->ouder = nullptr;
-            (*ouderBoom)->links->ouder = &(**ouderBoom);
+            (*ouderBoom)->ouder = (*ouderBoom)->links->ouder;
+            (*ouderBoom)->links->ouder = (*ouderBoom).get();
             if ((*ouderBoom)->links->rechts)
-                (*ouderBoom)->links->rechts->ouder = &(*(*ouderBoom)->links);
+                (*ouderBoom)->links->rechts->ouder = (*ouderBoom)->links.get();
         }
         else
         {
@@ -255,10 +247,10 @@ void Zoekboom<Sleutel, Data>::roteer(Sleutel sleutel)
             ouderBoom->swap(*plaats);
 
             //parents aanpassen
-            (*ouderBoom)->ouder = nullptr;
-            (*ouderBoom)->rechts->ouder = &(**ouderBoom);
+            (*ouderBoom)->ouder = (*ouderBoom)->rechts->ouder;
+            (*ouderBoom)->rechts->ouder = (*ouderBoom).get();
             if ((*ouderBoom)->rechts->links)
-                (*ouderBoom)->rechts->links->ouder = &(*(*ouderBoom)->rechts);
+                (*ouderBoom)->rechts->links->ouder = (*ouderBoom)->rechts.get();
         }
     }
 }
@@ -299,6 +291,9 @@ void Zoekboom<Sleutel, Data>::maakOnevenwichtig()
 template <class Sleutel, class Data>
 void Zoekboom<Sleutel, Data>::maakEvenwichtig()
 {
+    //Beter in 2 aparte methodes
+    //...
+
     //De boom onevenwichtig maken zodat knopen langs 1 kant staan
     this->maakOnevenwichtig();
 
@@ -306,6 +301,8 @@ void Zoekboom<Sleutel, Data>::maakEvenwichtig()
     int diepte = this->geefDiepte();
     for (int i = 0; i < diepte / 2; i++)
     {
+        //Checken indien nullptr
+        //...
         this->roteer((*this)->links->sleutel);
     }
 
