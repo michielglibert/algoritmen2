@@ -213,7 +213,6 @@ int Zoekboom<Sleutel, Data>::geefDiepte()
 template <class Sleutel, class Data>
 void Zoekboom<Sleutel, Data>::roteer(Sleutel sleutel)
 {
-    this->count++;
     // zoek naar de knoop die je wilt roteren
     zoekKnoop<Sleutel, Data> *ouder;
     Zoekboom<Sleutel, Data> *plaats;
@@ -223,6 +222,7 @@ void Zoekboom<Sleutel, Data>::roteer(Sleutel sleutel)
 
     if (ouder)
     {
+        this->count++;
         if ((*plaats)->sleutel > ouder->sleutel)
         {
             // rotatie links

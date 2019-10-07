@@ -54,6 +54,11 @@ int main()
     zoekKnoop<string, int> *knoop = shakespearboom.zoek("the");
     std::cout << "Knoop " << knoop->sleutel << " komt " << knoop->data << " keer voor." << std::endl;
     shakespearboom.teken("resultaat");
+    shakespearboom.count = 0;
+    shakespearboom.zoek("Complete");
+    std::cout << "Aantal rotaties: " << shakespearboom.count << std::endl;
+
+    shakespearboom.teken("resultaat2");
     std::cout << "Finished" << std::endl;
 
     return 0;
