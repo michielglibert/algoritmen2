@@ -1,7 +1,0 @@
-digraph {
-"1"[label="5:test 2"];
-"2" [shape=point];
-"3" [shape=point];
-"1" -> "2";
-"1" -> "3";
-}

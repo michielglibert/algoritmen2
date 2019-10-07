@@ -29,33 +29,37 @@ int main()
     boom2.teken("stap4");
 
     //Shakespear bestand
-    // Splayboom<string, int> shakespearboom;
-    // std::ifstream in{"Shakespeare.txt"};
-    // if (!in)
-    // {
-    //     std::cerr << "Error while reading file" << std::endl;
-    // }
+    Splayboom<string, int> shakespearboom;
+    std::ifstream in{"small.txt"};
+    if (!in)
+    {
+        std::cerr << "Error while reading file" << std::endl;
+    }
 
-    // std::string woord;
-    // shakespearboom.count = 0;
-    // while (in >> woord)
-    // {
-    //     std::cerr << woord << std::endl;
-    //     zoekKnoop<string, int> *knoop = shakespearboom.zoek(woord);
-    //     shakespearboom.teken("lol");
-    //     if (knoop == nullptr)
-    //     {
-    //         shakespearboom.voegtoe(woord, 1);
-    //     }
-    //     else
-    //     {
-    //         shakespearboom.voegtoe(woord, knoop->data + 1);
-    //     }
-    // }
+    std::string woord;
+    while (in >> woord)
+    {
+        zoekKnoop<string, int> *knoop = shakespearboom.zoek(woord);
+        if (knoop != nullptr && knoop->sleutel == "this")
+        {
+            std::cout << knoop->data << std::endl;
+        }
+        if (knoop == nullptr)
+        {
+            std::cout << "Zoeken returned nptr for word: " << woord << std::endl;
+            shakespearboom.voegtoe(woord, 1, false);
+        }
+        else
+        {
+            (knoop->data)++;
+        }
+    }
 
-    //std::cout << "Aantal rotaties voor elementen: " << shakespearboom.count << std::endl;
-    //shakespearboom.teken("stap5");
-
+    std::cout << "Aantal rotaties voor elementen: " << shakespearboom.count << std::endl;
+    shakespearboom.teken("stap5");
+    zoekKnoop<string, int> *knoop = shakespearboom.zoek("the");
+    shakespearboom.teken("lol");
+    std::cout << "Knoop " << knoop->sleutel << " komt " << knoop->data << " keer voor." << std::endl;
     std::cout << "Finished" << std::endl;
 
     return 0;

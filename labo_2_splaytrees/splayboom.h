@@ -52,13 +52,19 @@ void Splayboom<Sleutel, Data>::splay(zoekKnoop<Sleutel, Data> *knoop)
 template <class Sleutel, class Data>
 zoekKnoop<Sleutel, Data> *Splayboom<Sleutel, Data>::zoek(Sleutel sleutel)
 {
-    this->count = 0;
     zoekKnoop<Sleutel, Data> *ouder;
     Zoekboom<Sleutel, Data> *plaats;
     Zoekboom<Sleutel, Data>::zoek(sleutel, ouder, plaats);
-    this->splay(plaats->get());
+    if (*plaats)
+    {
+        std::cout << (*plaats)->data << std::endl;
+        this->splay(plaats->get());
+        return (*this).get();
+    }
 
-    return plaats->get();
+    std::cout << "Pointer: " << plaats->get() << "  -  "
+              << "This Pointer: " << (*this).get() << std::endl;
+    return nullptr;
 }
 
 template <class Sleutel, class Data>
