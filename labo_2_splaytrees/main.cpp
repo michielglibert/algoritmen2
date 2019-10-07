@@ -40,13 +40,8 @@ int main()
     while (in >> woord)
     {
         zoekKnoop<string, int> *knoop = shakespearboom.zoek(woord);
-        if (knoop != nullptr && knoop->sleutel == "this")
-        {
-            std::cout << knoop->data << std::endl;
-        }
         if (knoop == nullptr)
         {
-            std::cout << "Zoeken returned nptr for word: " << woord << std::endl;
             shakespearboom.voegtoe(woord, 1, false);
         }
         else
@@ -55,11 +50,10 @@ int main()
         }
     }
 
-    std::cout << "Aantal rotaties voor elementen: " << shakespearboom.count << std::endl;
-    shakespearboom.teken("stap5");
+    std::cout << "Aantal rotaties: " << shakespearboom.count << std::endl;
     zoekKnoop<string, int> *knoop = shakespearboom.zoek("the");
-    shakespearboom.teken("lol");
     std::cout << "Knoop " << knoop->sleutel << " komt " << knoop->data << " keer voor." << std::endl;
+    shakespearboom.teken("resultaat");
     std::cout << "Finished" << std::endl;
 
     return 0;

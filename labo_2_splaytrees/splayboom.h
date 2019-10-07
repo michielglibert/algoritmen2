@@ -57,13 +57,9 @@ zoekKnoop<Sleutel, Data> *Splayboom<Sleutel, Data>::zoek(Sleutel sleutel)
     Zoekboom<Sleutel, Data>::zoek(sleutel, ouder, plaats);
     if (*plaats)
     {
-        std::cout << (*plaats)->data << std::endl;
         this->splay(plaats->get());
         return (*this).get();
     }
-
-    std::cout << "Pointer: " << plaats->get() << "  -  "
-              << "This Pointer: " << (*this).get() << std::endl;
     return nullptr;
 }
 
