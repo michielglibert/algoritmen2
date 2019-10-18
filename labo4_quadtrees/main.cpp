@@ -21,6 +21,7 @@ int main()
     tree.voegToe(27, 9);
     tree.voegToe(75, 75);
     tree.schrijf();
+    tree.teken("test");
 
     cout << "Diepte: " << tree.geefDiepte() << endl;
     cout << "Finished" << endl;

@@ -9,8 +9,16 @@
 #include <functional>
 #include <stack>
 #include <algorithm>
+#include <string>
+#include <cassert>
+#include <sstream>
+
 using std::cerr;
 using std::endl;
+using std::ofstream;
+using std::ostream;
+using std::ostringstream;
+using std::string;
 using std::unique_ptr;
 
 /*****************************************************************************
@@ -40,6 +48,9 @@ public:
     void voegToe(int x, int y);
     int geefDiepte();
     void schrijf();
+    void teken(const char *bestandsnaam);
+    string tekenrec(ostream &uit, int &knoopteller);
+
     //de PRquadtree kan alleen punten bevatten met
     //-maxcoordinaat <= x < maxcoordinaat
     //-maxcoordinaat <= y < maxcoordinaat
@@ -231,6 +242,49 @@ int PRNietblad::geefDiepte()
     {
         return 0;
     }
+}
+
+void PRQuadtree::teken(const char *bestandsnaam)
+{
+    ofstream uit(bestandsnaam);
+    assert(uit);
+    int knoopteller = 0; //knopen moeten een eigen nummer krijgen.
+    uit << "digraph {\nnode[label=\"\"]\n";
+    this->tekenrec(uit, knoopteller);
+    uit << "}";
+}
+
+string PRQuadtree::tekenrec(ostream &uit, int &knoopteller)
+{
+    ostringstream wortelstring;
+    wortelstring << '"' << ++knoopteller << '"';
+    if (!*this)
+    {
+        uit << wortelstring.str() << " [shape=point];\n";
+    }
+    else
+    {
+        if (*this && (*this)->isBlad())
+        {
+            PRBlad *blad = static_cast<PRBlad *>(this->get());
+            uit << wortelstring.str() << "[label=\"(" << blad->x << "," << blad->y << ")\"]";
+            uit << ";\n";
+        }
+        else
+        {
+            PRNietblad *blad = static_cast<PRNietblad *>(this->get());
+            for (int i = 0; i < 4; i++)
+            {
+                if (blad->kind[i])
+                {
+                    PRQuadtree *tree = static_cast<PRQuadtree *>(&(blad->kind[i]));
+                    string kind = tree->tekenrec(uit, knoopteller);
+                    uit << wortelstring.str() << " -> " << kind << ";\n";
+                }
+            }
+        }
+    };
+    return wortelstring.str();
 }
 
 const int PRNietblad::OOST = 0;
