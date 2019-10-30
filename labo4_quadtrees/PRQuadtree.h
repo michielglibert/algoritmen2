@@ -34,6 +34,7 @@ class PRQuadtree;
 class PRQuadtree : public Knoopptr
 {
 public:
+    static int totaal;
     using Knoopptr::unique_ptr;
     PRQuadtree(int a) : maxcoordinaat{a} {};
     PRQuadtree(Knoopptr &&a) : Knoopptr(move(a)){};
@@ -168,7 +169,7 @@ void PRQuadtree::preEnPostOrder(std::function<void(PRKnoop *)> &bezoekPre, std::
 void PRQuadtree::voegToe(int x, int y)
 {
     // Checken of punt binnen de bounds ligt
-    if (x < 0 || y < 0 || x > this->maxcoordinaat || y > this->maxcoordinaat)
+    if (x < -this->maxcoordinaat || y < -this->maxcoordinaat || x > this->maxcoordinaat || y > this->maxcoordinaat)
     {
         cerr << "Point out of bounds" << endl;
         return;
@@ -177,16 +178,43 @@ void PRQuadtree::voegToe(int x, int y)
     // Als punt een blad is en bestaat
     //cerr << "Adding point with coordinates (" << x << "," << y << ")" << endl;
     Knoopptr *knoop = this;
-    int xc, yc, maximum;
-    xc = yc = 0;
+    int xLinksboven, yLinksboven, xRechtsonder, yRechtsonder, maximum;
     maximum = this->maxcoordinaat;
+    xLinksboven = yLinksboven = -maximum;
+    xRechtsonder = yRechtsonder = maximum;
 
     while (*knoop && !(*knoop)->isBlad())
     {
-        maximum / 2 == 0 ? maximum = 1 : maximum /= 2;
-        xc = x <= xc ? xc - maximum : xc + maximum;
-        yc = y <= yc ? yc - maximum : yc + maximum;
+        int xc = (xLinksboven + xRechtsonder) / 2;
+        int yc = (yLinksboven + yRechtsonder) / 2;
         knoop = static_cast<PRNietblad *>(knoop->get())->geefKind(x, y, xc, yc);
+        //maximum / 2 == 0 ? maximum = 1 : maximum /= 2;
+        maximum /= 2;
+
+        if (x < xc)
+        {
+            xRechtsonder = xc;
+            if (y < yc)
+            {
+                yRechtsonder = yc;
+            }
+            else
+            {
+                yLinksboven = yc;
+            }
+        }
+        else
+        {
+            xLinksboven = xc;
+            if (y < yc)
+            {
+                yRechtsonder = yc;
+            }
+            else
+            {
+                yLinksboven = yc;
+            }
+        }
     }
 
     if (*knoop && (*knoop)->isBlad())
@@ -195,6 +223,7 @@ void PRQuadtree::voegToe(int x, int y)
 
         if (x == blad->x && y == blad->y)
         {
+            this->totaal++;
             cerr << "Point already defined" << endl;
             return;
         }
@@ -205,6 +234,11 @@ void PRQuadtree::voegToe(int x, int y)
         *knoop = std::make_unique<PRNietblad>();
         this->voegToe(blad_x, blad_y);
         this->voegToe(x, y);
+        if (x == blad->x && y == blad->y)
+        {
+            cerr << "Point already defined" << endl;
+            return;
+        }
     }
     else
     {
@@ -233,10 +267,10 @@ int PRNietblad::geefDiepte()
         {
             if (this->kind[i])
             {
-                diepte = std::max(diepte, this->kind[i]->geefDiepte());
+                diepte = std::max(1 + diepte, this->kind[i]->geefDiepte());
             }
         }
-        return 1 + diepte;
+        return diepte;
     }
     else
     {
