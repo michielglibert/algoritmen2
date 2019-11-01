@@ -1,0 +1,4 @@
+digraph {
+node [style=filled, fontcolor=white];
+"1" [shape=point];
+}
