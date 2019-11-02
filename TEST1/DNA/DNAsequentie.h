@@ -17,6 +17,7 @@ public:
 
 void DNAsequentie::print_matrix(vector<vector<int>> &matrix, const string &s) const
 {
+    //Functie voor uitrprinten ter controle
     cout << "      ";
     for (int i = 0; i < s.size(); i++)
     {
@@ -51,7 +52,14 @@ int DNAsequentie::d(const string &s) const
     // o  0 1 2 2 2
     // m  0 1 2 2 2
     //Er zijn 3 verschillende operaties in de tabel
-    //Dit zijn: links, boven en diagonaal
+    //Dit zijn: {links}, {boven} en {diagonaal}
+
+    //LET OP
+    //In dit geval moeten we het probleem iets anders aanpakken
+    //Als we 2 gelijke letters vinden is dat geen mutatie dus geven we 0 terug
+    //2 Verschillende letters duid echter wel op 1 mutatie dus doen we daar wel 1 + ...
+    //We zoeken ipv het maximum, het minimum van de deelsequenties
+    //We doen dus eigenlijk gewoon het omgekeerde dan bij een normale LGD
 
     //2D vector voor tabel c initialiseren
     //Nulwaardes voor lege substring vergelijkingen
@@ -64,18 +72,19 @@ int DNAsequentie::d(const string &s) const
         {
             if ((*this)[i - 1] == s[j - 1])
             {
-                //Letters komen overeen
-                c[i][j] = 1 + c[i - 1][j - 1];
+                //Hetzelfde? Sowieso mutatieafstand 0
+                c[i][j] = c[i - 1][j - 1];
             }
             else
             {
-                //Letters komen niet overeen, hoogste van de 2.
-                c[i][j] = max(c[i - 1][j], c[i][j - 1]);
+                //Niet hetzelfde? 1 + de minimale deelsequentie
+                //Hier moeten we het minimum vinden van de 3 operaties vermeldt in de opgave
+                c[i][j] = min(1 + c[i - 1][j], min(1 + c[i][j - 1], 1 + c[i - 1][j - 1]));
             }
         }
     }
 
-    print_matrix(c, s);
+    //print_matrix(c, s);
     return c[this->length()][s.length()];
 }
 
