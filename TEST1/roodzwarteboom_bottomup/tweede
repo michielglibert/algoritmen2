@@ -1,16 +1,12 @@
 digraph {
 node [style=filled, fontcolor=white];
-"1"[label="45"][color=red];
-"2"[label="34"][color=red];
-"3" [shape=point];
+"1"[label="12"][color=red];
+"2" [shape=point];
+"3"[label="15"][color=red];
 "4" [shape=point];
-"2" -> "3";
-"2" -> "4";
-"5"[label="50"][color=black];
-"6" [shape=point];
-"7" [shape=point];
-"5" -> "6";
-"5" -> "7";
+"5" [shape=point];
+"3" -> "4";
+"3" -> "5";
 "1" -> "2";
-"1" -> "5";
+"1" -> "3";
 }

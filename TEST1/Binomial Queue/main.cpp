@@ -18,6 +18,7 @@ int main()
     heap.voegToe(24, "data");
     heap.voegToe(20, "data");
     cout << heap.popMinimum() << endl;
+    cout << heap.popMinimum() << endl;
     heap.teken("test");
 
     cout << "Finished" << endl;

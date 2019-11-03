@@ -158,44 +158,49 @@ void Roodzwarteboom<Sleutel, Data>::verwijder(Sleutel sleutel)
     Zoekboom<Sleutel, pair<Data, bool>> *knoop;
     Zoekboom<Sleutel, pair<Data, bool>>::zoek(sleutel, ouder, knoop);
 
-    if (!geefKleur(knoop) && !geefKleur(&((*knoop)->links)) && !geefKleur(&((*knoop)->rechts)))
-    {
-        if (sleutel == 4)
-        {
-            cerr << "kom" << endl;
-        }
-        //2 kinderen
-        cerr << "Doing recursion" << endl;
-        // if (ouder != nullptr)
-        // {
-        //     verwijder_rec(ouder->sleutel);
-        // }
-        // else
-        // {
-        verwijder_rec(sleutel);
-        // }
-    }
-    else if (!geefKleur(knoop) && (*knoop)->links != nullptr)
-    {
-        //1 linkerkind
-        (*knoop)->links->data.second = false;
-    }
-    else if (!geefKleur(knoop) && (*knoop)->rechts != nullptr)
-    {
-        //1 rehcterkind
-        (*knoop)->rechts->data.second = false;
-    }
-    //Rode knoop of geen kinderen
-    if (ouder->ouder == nullptr && (*knoop)->rechts)
-    {
-        Zoekboom<Sleutel, pair<Data, bool>> *nieuwe = &((*knoop)->rechts);
-        while ((*nieuwe)->links != nullptr)
-        {
-            nieuwe = &((*nieuwe)->links);
-        }
-        (*nieuwe)->data.second = false;
-    }
+    Zoekboom<Sleutel, pair<Data, bool>> *opvolger = Zoekboom<Sleutel, pair<Data, bool>>::geefOpvolger(sleutel);
+    bool kleur = (*knoop)->data.second;
     Zoekboom<Sleutel, pair<Data, bool>>::verwijder(sleutel);
+    if (!((*opvolger)->data.second))
+    {
+        if (!geefKleur(knoop) && !geefKleur(&((*knoop)->links)) && !geefKleur(&((*knoop)->rechts)))
+        {
+            if (sleutel == 4)
+            {
+                cerr << "kom" << endl;
+            }
+            //2 zwarte kinderen
+            cerr << "Doing recursion" << endl;
+            verwijder_rec(sleutel);
+        }
+        else if (!geefKleur(knoop) && (*knoop)->links != nullptr && geefKleur(&((*knoop)->links)))
+        {
+            //1 linkerkind
+            (*knoop)->links->data.second = false;
+        }
+        else if (!geefKleur(knoop) && (*knoop)->rechts != nullptr && geefKleur(&((*knoop)->rechts)))
+        {
+            //1 rechterkind
+            (*knoop)->rechts->data.second = false;
+        }
+    }
+    else
+    {
+        //Kleur overnemen
+        (*knoop)->data.second = kleur;
+    }
+
+    //Rode knoop mag gewoon verwijderd worden
+
+    // if (ouder->ouder == nullptr && (*knoop)->rechts)
+    // {
+    //     Zoekboom<Sleutel, pair<Data, bool>> *nieuwe = &((*knoop)->rechts);
+    //     while ((*nieuwe)->links != nullptr)
+    //     {
+    //         nieuwe = &((*nieuwe)->links);
+    //     }
+    //     (*nieuwe)->data.second = false;
+    // }
 }
 
 template <class Sleutel, class Data>
@@ -209,66 +214,66 @@ void Roodzwarteboom<Sleutel, Data>::verwijder_rec(Sleutel sleutel)
     {
         if (sleutel == 4)
             cerr << "In recursion" << endl;
-        if (ouder->sleutel > sleutel && ouder->rechts && geefKleur(&(ouder->rechts)))
+        if ((*knoop)->sleutel > sleutel && (*knoop)->rechts && geefKleur(&((*knoop)->rechts)))
         {
             cerr << "Rode broer" << endl;
             //Rode broer
             Zoekboom<Sleutel, pair<Data, bool>>::roteer(ouder->rechts->sleutel);
             verwijder_rec(sleutel);
         }
-        else if (ouder->sleutel < sleutel && ouder->links && geefKleur(&(ouder->links)))
+        else if ((*knoop)->sleutel < sleutel && (*knoop)->links && geefKleur(&((*knoop)->links)))
         {
             cerr << "Rode broer spiegelbeeld" << endl;
             //Rode broer spiegelbeeld
-            Zoekboom<Sleutel, pair<Data, bool>>::roteer(ouder->links->sleutel);
+            Zoekboom<Sleutel, pair<Data, bool>>::roteer((*knoop)->links->sleutel);
             verwijder_rec(sleutel);
         }
-        else if ((ouder->sleutel > sleutel && ouder->rechts) && !geefKleur(&(ouder->rechts->links)) && !geefKleur(&(ouder->rechts->rechts)))
+        else if (((*knoop)->sleutel > sleutel && (*knoop)->rechts) && !geefKleur(&((*knoop)->rechts->links)) && !geefKleur(&((*knoop)->rechts->rechts)))
         {
             cerr << "2 zwarte kinderen" << endl;
             //2 zwarte kinderen
-            ouder->data.second = false;
-            ouder->rechts->data.second = true;
-            verwijder_rec(ouder->sleutel);
+            (*knoop)->data.second = false;
+            (*knoop)->rechts->data.second = true;
+            verwijder_rec((*knoop)->sleutel);
         }
-        else if ((ouder->sleutel < sleutel && ouder->links) && !geefKleur(&(ouder->links->links)) && !geefKleur(&(ouder->links->rechts)))
+        else if (((*knoop)->sleutel < sleutel && (*knoop)->links) && !geefKleur(&((*knoop)->links->links)) && !geefKleur(&((*knoop)->links->rechts)))
         {
             cerr << "2 zwarte kinderen spiegelbeeld" << endl;
             //2 zwarte kinderen spiegelbeeld
-            ouder->data.second = false;
-            ouder->links->data.second = true;
-            verwijder_rec(ouder->sleutel);
+            (*knoop)->data.second = false;
+            (*knoop)->links->data.second = true;
+            verwijder_rec((*knoop)->sleutel);
         }
-        else if (ouder->sleutel > sleutel && geefKleur(&(ouder->rechts->rechts)))
+        else if ((*knoop)->sleutel > sleutel && geefKleur(&((*knoop)->rechts->rechts)))
         {
             cerr << "1 rood rechterkind" << endl;
             //1 rood rechterkind
-            Zoekboom<Sleutel, pair<Data, bool>>::roteer(ouder->rechts->sleutel);
-            ouder->rechts->data.second = ouder->data.second;
-            ouder->ouder->rechts->data.second = false;
-            ouder->data.second = false;
+            Zoekboom<Sleutel, pair<Data, bool>>::roteer((*knoop)->rechts->sleutel);
+            (*knoop)->rechts->data.second = (*knoop)->data.second;
+            (*knoop)->rechts->data.second = false;
+            (*knoop)->data.second = false;
         }
-        else if (ouder->sleutel < sleutel && geefKleur(&(ouder->rechts->links)))
+        else if (ouder->sleutel < sleutel && geefKleur(&((*knoop)->rechts->links)))
         {
             cerr << "1 rood rechterkind spiegelbeeld" << endl;
             //1 rood rechterkind spiegelbeeld
-            Zoekboom<Sleutel, pair<Data, bool>>::roteer(ouder->links->sleutel);
-            ouder->links->data.second = ouder->data.second;
-            ouder->links->links->data.second = false;
-            ouder->data.second = false;
+            Zoekboom<Sleutel, pair<Data, bool>>::roteer((*knoop)->links->sleutel);
+            (*knoop)->links->data.second = (*knoop)->data.second;
+            (*knoop)->links->links->data.second = false;
+            (*knoop)->data.second = false;
         }
-        else if (ouder->sleutel > sleutel && ouder->rechts)
+        else if ((*knoop)->sleutel > sleutel && (*knoop)->rechts)
         {
             cerr << "Zwart rechterkind en rood linkerkind" << endl;
             //Zwart rechterkind en rood linkerkind
-            Zoekboom<Sleutel, pair<Data, bool>>::roteer(ouder->rechts->links->sleutel);
+            Zoekboom<Sleutel, pair<Data, bool>>::roteer((*knoop)->rechts->links->sleutel);
             verwijder_rec(sleutel);
         }
         else
         {
             cerr << "Zwart rechterkind en rood linkerkind spiegelbeeld" << endl;
             //Zwart recherkind en rood linkerkind spiegelbeeld
-            Zoekboom<Sleutel, pair<Data, bool>>::roteer(ouder->links->rechts->sleutel);
+            Zoekboom<Sleutel, pair<Data, bool>>::roteer((*knoop)->links->rechts->sleutel);
             verwijder_rec(sleutel);
         }
     }
