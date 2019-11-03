@@ -53,8 +53,8 @@ public:
     // geefBoomBovenKnoop: gegeven een knooppointer, wele boom wijst naar de knoop
     // preconditie: knoop moet een naar een geldige knoop wijzen.
     Zoekboom<Sleutel, Data> *geefBoomBovenKnoop(zoekKnoop<Sleutel, Data> &knoopptr);
-    void voegtoe(const Sleutel &sleutel, const Data &data, bool dubbelsToestaan = false);
-	void verwijder(const Sleutel &sleutel);
+    zoekKnoop<Sleutel, Data> *voegtoe(const Sleutel &sleutel, const Data &data, bool dubbelsToestaan = false);
+    void verwijder(const Sleutel &sleutel, zoekKnoop<Sleutel, Data> *&ouder);
     void roteer(Sleutel sleutel);
     void maakOnevenwichtig();
     void maakOnevenwichtig_func(const zoekKnoop<Sleutel, Data> &);
@@ -163,7 +163,7 @@ Zoekboom<Sleutel, Data> *Zoekboom<Sleutel, Data>::geefBoomBovenKnoop(zoekKnoop<S
 }
 
 template <class Sleutel, class Data>
-void Zoekboom<Sleutel, Data>::voegtoe(const Sleutel &sleutel, const Data &data, bool dubbelsToestaan)
+zoekKnoop<Sleutel, Data> *Zoekboom<Sleutel, Data>::voegtoe(const Sleutel &sleutel, const Data &data, bool dubbelsToestaan)
 {
     zoekKnoop<Sleutel, Data> *ouder;
     Zoekboom<Sleutel, Data> *plaats;
@@ -177,13 +177,14 @@ void Zoekboom<Sleutel, Data>::voegtoe(const Sleutel &sleutel, const Data &data, 
             std::make_unique<zoekKnoop<Sleutel, Data>>(sleutel, data);
         nieuw->ouder = ouder;
         *plaats = move(nieuw);
+        return plaats->get();
     }
+    return nullptr;
 }
 
 template <class Sleutel, class Data>
-void Zoekboom<Sleutel, Data>::verwijder(const Sleutel &sleutel)
+void Zoekboom<Sleutel, Data>::verwijder(const Sleutel &sleutel, zoekKnoop<Sleutel, Data> *&ouder)
 {
-    zoekKnoop<Sleutel, Data> *ouder;
     Zoekboom<Sleutel, Data> *plaats;
     Zoekboom<Sleutel, Data>::zoek(sleutel, ouder, plaats);
 
@@ -259,35 +260,35 @@ void Zoekboom<Sleutel, Data>::roteer(Sleutel sleutel)
     Zoekboom<Sleutel, Data> *plaats;
 
     Zoekboom<Sleutel, Data>::zoek(sleutel, ouder, plaats);
-    Zoekboom<Sleutel, Data> *ouderBoom = this->geefBoomBovenKnoop(*ouder);
+    Zoekboom<Sleutel, Data> *ouderBoom = geefBoomBovenKnoop(*ouder);
 
-    if (ouder)
+    if ((*ouderBoom)->sleutel > (*plaats)->sleutel)
     {
-        this->count++;
-        if ((*plaats)->sleutel > ouder->sleutel)
-        {
-            // rotatie links
-            ouderBoom->swap((*plaats)->links);
-            ouderBoom->swap(*plaats);
+        //Rechtse rotatie
 
-            //parents aanpassen
-            (*ouderBoom)->ouder = (*ouderBoom)->links->ouder;
-            (*ouderBoom)->links->ouder = (*ouderBoom).get();
-            if ((*ouderBoom)->links->rechts)
-                (*ouderBoom)->links->rechts->ouder = (*ouderBoom)->links.get();
-        }
-        else
-        {
-            // rotatie rechts
-            ouderBoom->swap((*plaats)->rechts);
-            ouderBoom->swap(*plaats);
+        //Swappen
+        swap((*plaats)->rechts, *ouderBoom);
+        swap(*plaats, *ouderBoom);
 
-            //parents aanpassen
-            (*ouderBoom)->ouder = (*ouderBoom)->rechts->ouder;
-            (*ouderBoom)->rechts->ouder = (*ouderBoom).get();
-            if ((*ouderBoom)->rechts->links)
-                (*ouderBoom)->rechts->links->ouder = (*ouderBoom)->rechts.get();
-        }
+        //Ouders aanpassen
+        (*ouderBoom)->ouder = (*ouderBoom)->rechts->ouder;
+        (*ouderBoom)->rechts->ouder = (*ouderBoom).get();
+        if (*plaats)
+            (*plaats)->ouder = (*ouderBoom)->rechts.get();
+    }
+    else
+    {
+        //Linkse rotatie
+
+        //Swappen
+        swap((*plaats)->links, *ouderBoom);
+        swap(*plaats, *ouderBoom);
+
+        //Ouders aanpassen
+        (*ouderBoom)->ouder = (*ouderBoom)->links->ouder;
+        (*ouderBoom)->links->ouder = (*ouderBoom).get();
+        if (*plaats)
+            (*plaats)->ouder = (*ouderBoom)->links.get();
     }
 }
 

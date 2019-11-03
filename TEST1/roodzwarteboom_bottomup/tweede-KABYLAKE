@@ -1,0 +1,16 @@
+digraph {
+node [style=filled, fontcolor=white];
+"1"[label="-8"][color=red];
+"2"[label="-9"][color=red];
+"3" [shape=point];
+"4" [shape=point];
+"2" -> "3";
+"2" -> "4";
+"5"[label="-7"][color=black];
+"6" [shape=point];
+"7" [shape=point];
+"5" -> "6";
+"5" -> "7";
+"1" -> "2";
+"1" -> "5";
+}
