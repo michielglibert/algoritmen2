@@ -77,6 +77,47 @@ protected:
 };
 
 template <class T>
+class Kortstepadzoeker
+{
+public:
+    Kortstepadzoeker(const Stroomnetwerk<T> &stroomnetwerk) : q(stroomnetwerk), v(stroomnetwerk.van), v2(stroomnetwerk.naar),
+                                                              l(q.aantalKnopen()), m(q.aantalKnopen(), false){};
+    Pad<T> geefKortstePad();
+
+protected:
+    virtual void foo(int t, int x, Pad<T> &p);
+    const Stroomnetwerk<T> &q;
+    vector<int> l;
+    vector<bool> m;
+    int v, v2;
+};
+
+template <class T>
+Pad<T> Kortstepadzoeker<T>::geefKortstePad()
+{
+    //     for (int i = 0; i < m.size(); i++)
+    //     {
+    //         m[i] = false;
+    //     }
+    //     Pad<T> p;
+    //     assert(v != v2);
+    //     foo(v, 0, p);
+    //     assert(p.size() != 1);
+    // if (p.size() > 1)
+    // {
+    //     T g = *q.geefTakdata(p[0], p[1]);
+    //     for (int i = 2; i < p.size(); i++)
+    //     {
+    //         T ychg = *q.geefTakdata(p[i - 1], p[i]);
+    //         if (ychg < g)
+    //             g = ychg;
+    //     }
+    //     p.zetCapaciteit(g);
+    // }
+    return p;
+}
+
+template <class T>
 Pad<T> Vergrotendpadzoeker<T>::geefVergrotendPad()
 {
     for (int i = 0; i < m.size(); i++)
@@ -219,8 +260,16 @@ Stroomnetwerk<T> &Stroomnetwerk<T>::operator-=(const Pad<T> &pad)
         int einde = pad[i];
 
         int nummer = this->verbindingsnummer(begin, einde);
-
-        this->takdatavector[nummer] -= maxcap;
+        if (this->takdatavector[nummer] == 0)
+        {
+            //Geen capaciteit meer, verwijder de tak
+            this->verwijderVerbinding(begin, einde);
+        }
+        else
+        {
+            //Verlaag capaciteit
+            this->vergrootTak(begin, einde, -cap);
+        }
     }
 }
 
@@ -232,10 +281,16 @@ Stroomnetwerk<T> &Stroomnetwerk<T>::operator+=(const Pad<T> &pad)
     {
         int begin = pad[i - 1];
         int einde = pad[i];
+        int terug_verbinding = this->verbindingsnummer(einde, begin);
 
-        int nummer = this->verbindingsnummer(einde, begin);
-
-        this->takdatavector[nummer] += cap;
+        if (this->takdatavector[terug_verbinding] <= cap)
+        {
+            this->verwijderVerbinding(einde, begin);
+        }
+        else
+        {
+            this->takdatavector[terug_verbinding] -= cap;
+        }
     }
 }
 
