@@ -1,67 +1,130 @@
-#ifndef __DA_H_
-#define __DA_H_
+#ifndef __NA_H_
+#define __NA_H_
 
 #include <vector>
 #include <iostream>
+#include <queue>
 #include "thompsonna.h"
 
 using namespace std;
 
-class DA
+//Dit is een NA geen DA omdat een DA altijd 1 specifieke staat heeft
+//Voor de overgang te doen moeten we eerder een gegevensstructuur bijhouden die alle overgangen aantoont
+//in plaats van steeds te loopen door alle verbindingen uit de thompson NA. Een mogelijkheid hier zou een
+//tabel zijn die dan voor elke staat de mogelijke overgangsstaat geeft.
+
+//De vector van staten zorgt ervoor dat het een DA is.
+
+//Daarnaast moeten enkel functies nog private/protected worden gezet.
+
+//Na hoeft geen pointer te zijn
+
+class NA
 {
 public:
-    DA(const Regexp &&re) : na(ThompsonNA(re)) {}
-    int geefStaat();
-    bool overloop(string);
-    void overgang(char, int);
+    NA(const Regexp &re) : na(re)
+    {
+        staten.push_back(0);
+    }
+    int operator[](int idx);
+    void setStaat(int, int);
+    void pushStaat(int);
+    void removeStaatByIndex(int);
+    int overloop(const string &);
+    void overgang(char, int, int);
     void reset();
 
 private:
-    int staat;
-    ThompsonNA &na;
+    vector<int> staten;
+    ThompsonNA na;
 };
 
-int DA::geefStaat()
+int NA::operator[](int i)
 {
-    return this->staat;
+    return staten[i];
 }
 
-bool DA::overloop(string lijn)
+void NA::setStaat(int i, int staat)
+{
+    this->staten[i] = staat;
+}
+
+void NA::pushStaat(int staat)
+{
+    this->staten.push_back(staat);
+}
+
+void NA::removeStaatByIndex(int index)
+{
+    this->staten.erase(staten.begin() + index);
+}
+
+int NA::overloop(const string &lijn)
 {
     int aanwezig = 0;
-
-    for (int j = 0; j < lijn.size(); j++)
+    int j = 0;
+    while (j < lijn.size())
     {
-        for (int i = 0; i < na.geefAantalVerbindingen(); i++)
+        queue<int> todo;
+        for (int i = 0; i < staten.size(); i++)
+            todo.push(staten[i]);
+        staten.clear();
+
+        while (!todo.empty())
         {
-            overgang(lijn[j], i);
-            if (na.geefAantalVerbindingen() == na[i].geefDoel && na[i].geefKarakter() == epsilon)
+            int staat = todo.front();
+
+            for (int i = 0; i < na->geefAantalVerbindingen(); i++)
             {
-                aanwezig++;
+                if ((*na)[i].geefBron() == staat && (*na)[i].geefKarakter() == epsilon)
+                {
+                    todo.push((*na)[i].geefDoel());
+                }
+            }
+            pushStaat(staat);
+
+            todo.pop();
+        }
+        for (int statenTeller = 0; statenTeller < staten.size(); statenTeller++)
+        {
+            for (int i = 0; i < na->geefAantalVerbindingen(); i++)
+            {
+                if ((*na)[i].geefBron() == staten[statenTeller])
+                {
+                    overgang(lijn[j], i, statenTeller);
+                    if (na->geefAantalStatenbits() - 1 == (*na)[i].geefDoel())
+                    {
+                        aanwezig++;
+                    }
+                }
             }
         }
+        j++;
+
+        if (staten.empty())
+        {
+            this->reset();
+        }
+    }
+    return aanwezig;
+}
+
+void NA::overgang(char karakter, int verbindingnummer, int staatIndex)
+{
+    if (((*na)[verbindingnummer].geefKarakter() == karakter && (*na)[verbindingnummer].geefBron() == (*this)[staatIndex]) || (*na)[verbindingnummer].geefKarakter() == epsilon)
+    {
+        setStaat(staatIndex, (*na)[verbindingnummer].geefDoel());
+    }
+    else
+    {
+        removeStaatByIndex(staatIndex);
     }
 }
 
-void DA::overgang(char karakter, int verbindingnummer)
+void NA::reset()
 {
-    if (na[verbindingnummer].geefKarakter() == epsilon)
-    {
-        this->staat++;
-    }
-    else if (na[verbindingnummer].geefKarakter() == karakter && na[verbindingnummer].geefBron() == this->staat)
-    {
-        this->staat = na[verbindingnummer].geefDoel();
-    }
-    else if (na[verbindingnummer].geefDoel() == na[verbindingnummer].geefBron() + 1)
-    {
-        this->reset();
-    }
-}
-
-void DA::reset()
-{
-    this->staat = 0;
+    this->staten.clear();
+    staten.push_back(0);
 }
 
 #endif
