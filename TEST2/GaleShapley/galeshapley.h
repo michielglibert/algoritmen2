@@ -2,11 +2,76 @@
 #define __GALESHAPLEY_H
 
 #include <vector>
+#include <iostream>
+#include <queue>
 
 using namespace std;
 
-vector<int> stabieleKoppeling(vector<int> &voorkeurMannen, vector<int> &voorkeurVrouwen)
+//Een voorkeurs lijst ziet er het volgt uit
+//i bevat de man/vrouw
+//j bevat de positie in de ranglijst (0 = 1ste plaats, 1 = 2de plaats)
+//de waarde [i][j] bevat dan de corresponderende man
+pair<vector<int>, vector<int>> galeshapley(vector<vector<int>> &voorkeurMannen, vector<vector<int>> &voorkeurVrouwen)
 {
+    //We stellen eerst een ranglijst op. Met deze ranglijst kunnen we snel bepalen welke man er op welke rang staat
+    //Voor een vrouw. Zo kunnen we snel teweten komen of een man beter is voor een vrouw.
+    //i = vrouw, j = man, k = positie
+
+    if (voorkeurMannen.size() != voorkeurVrouwen.size())
+    {
+        cerr << "Aantal vrouwen moet gelijk zijn aan aantal mannen" << endl;
+    }
+
+    vector<vector<int>> ranglijst(voorkeurVrouwen.size());
+
+    for (int i = 0; i < voorkeurVrouwen.size(); i++)
+    {
+        ranglijst[i].resize(voorkeurVrouwen.size());
+        for (int j = 0; j < voorkeurVrouwen[i].size(); j++)
+        {
+            ranglijst[i][voorkeurVrouwen[i][j]] = j;
+        }
+    }
+
+    //Nu dat we de ranglijsten hebben kunnen we het algoritme zelf uitvoeren
+    //Hierbij hebben we nog nood aan een lijst van vrije mannen en vrouwen
+    //Hiermee maken we direct ook duidelijk aan welke man/vrouw de persoon
+    //gekoppeld is.
+
+    vector<int> koppellingMannen(voorkeurMannen.size(), -1);
+    vector<int> koppelingVrouwen(voorkeurVrouwen.size(), -1);
+
+    //We gebruiken een queue om de mannen te overlopen
+    //Soms zal een man terug vrijgezel worden waardoor hij dus
+    //opnieuw aan de queue moet worden toegevoegd
+    queue<int> vrijeMannen;
+    for (int i = 0; i < voorkeurMannen.size(); i++)
+        vrijeMannen.push(i);
+
+    while (!vrijeMannen.empty())
+    {
+        int man = vrijeMannen.front();
+        vrijeMannen.pop();
+
+        for (int vrouw : voorkeurMannen[man])
+        {
+            if (koppelingVrouwen[vrouw] == -1 || ranglijst[vrouw][man] < ranglijst[vrouw][koppelingVrouwen[vrouw]])
+            {
+                if (koppelingVrouwen[vrouw] != -1)
+                {
+                    vrijeMannen.push(koppelingVrouwen[vrouw]);
+                    koppellingMannen[koppelingVrouwen[vrouw]] = -1;
+                    cout << "Vrouw " << vrouw << " verbreekt haar verloving met man " << koppelingVrouwen[vrouw] << endl;
+                }
+                koppellingMannen[man] = vrouw;
+                koppelingVrouwen[vrouw] = man;
+                cout << "Man " << man << " verloofd zich met vrouw " << vrouw << endl;
+                break;
+            }
+        }
+    }
+    pair returnPair(koppellingMannen, koppelingVrouwen);
+    return returnPair;
 }
 
 #endif

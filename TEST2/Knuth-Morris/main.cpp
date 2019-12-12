@@ -4,10 +4,10 @@
 
 int main()
 {
-    string patroon = "abxabf";
+    string patroon = "pxpypxpypxpx";
     KnuthMorris km(patroon);
     long int teller = 0;
-    string tekst = "abdfabxabf";
+    string tekst = "pxpypxpypxpxpypxpypxpx";
     queue<int> posities = km.zoek(tekst, teller);
     cout << teller << endl;
     teller = 0;
