@@ -1,0 +1,17 @@
+digraph {
+{ rank=source; "0:P" }
+{ rank=sink; "5:V" }
+"0:P" -> 2[label="3"];
+"0:P" -> 6[label="6"];
+"0:P" -> 7[label="5"];
+1 -> "0:P"[label="10"];
+1 -> 2[label="7"];
+2 -> "5:V"[label="4"];
+3 -> 4[label="7"];
+4 -> "5:V"[label="1"];
+"5:V" -> 6[label="6"];
+6 -> 3[label="2"];
+6 -> 4[label="8"];
+7 -> 1[label="2"];
+7 -> 3[label="6"];
+}

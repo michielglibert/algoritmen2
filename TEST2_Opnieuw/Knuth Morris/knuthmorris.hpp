@@ -70,7 +70,7 @@ KnuthMorrisPratt::KnuthMorrisPratt(const uchar *naald, uint _naaldlengte)
         else if (prefix[i] != 0)
         {
             //Is niet gelijk aan 0 EN letter hetzelfde prefixwaarde van vorige overnemen
-            kmp_tabel[i] = kmp_tabel[prefix[i]];
+            kmp_tabel[i] = kmp_tabel[prefix[i - 1]];
         }
     }
     for (int i = 0; i < _naaldlengte; i++)
@@ -104,6 +104,7 @@ void KnuthMorrisPratt::zoek(queue<int> &plaats, const uchar *hooiberg, uint hooi
         //Match gevonden, pushen naar queue
         if (j == _naaldlengte)
         {
+            cout << "looooooool" << endl;
             plaats.push(1);
         }
     }

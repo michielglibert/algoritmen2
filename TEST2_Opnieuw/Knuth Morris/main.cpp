@@ -4,8 +4,8 @@
 
 int main()
 {
-    string naald = "aaaaa";
-    string hooiberg = "aaaaa";
+    string naald = "pxpypxpypxpx";
+    string hooiberg = "pxpypxpypxpxpypxpypxpx";
     KnuthMorrisPratt kmp2(naald);
     KnuthMorrisPratt kmp((uchar *)naald.c_str(), naald.size());
     queue<int> plaats;
