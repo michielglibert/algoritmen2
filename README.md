@@ -14,7 +14,7 @@ Compilen met c++17
 
 * Implementeer Binomial Queue
 
-# Test 2 vragen
+## Test 2 vragen
 * Implementeer karp rabin, grootste priemgetal werd gegeven
 
 
