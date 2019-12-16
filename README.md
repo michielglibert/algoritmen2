@@ -16,6 +16,8 @@ Compilen met c++17
 
 # Test 2 vragen
 * Implementeer karp rabin, grootste priemgetal werd gegeven
+
+
 * Implementeer de functie 'bool GraafMetTakData::heeftNegatieveCykels()'
 
 -> Graafklasse gegeven
